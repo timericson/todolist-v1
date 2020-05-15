@@ -2,10 +2,15 @@
 
 
 const express = require("express");
-// const https = require("https");
+
 const bodyParser = require("body-parser");
 
 const app = express();
+
+let items = ["Buy Food", "Cook Food", "Eat Food"];
+
+app.set('view engine', 'ejs');
+
 
 app.use(bodyParser.urlencoded({
   extended: true
@@ -14,56 +19,44 @@ app.use(bodyParser.urlencoded({
 app.get("/", function(req, res) {
 
 
-  var date = new Date();
-  var today = date.getDay();
+  let date = new Date();
+  // var today = date.getDay();
+  // var week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  // var day = week[today];
 
-  switch (today) {
-    case 0:
-      day = "Sunday";
-      break;
-    case 1:
-      day = "Monday";
-      break;
-    case 2:
-      day = "Tuesday";
-      break;
-    case 3:
-      day = "Wednesday";
-      break;
-    case 4:
-      day = "Thursday";
-      break;
-    case 5:
-      day = "Friday";
-      break;
-    case 6:
-      day = "Saturday";
-  }
+  var options = {
+    weekday: "long",
+    day: "numeric",
+    month: "long"
+  };
 
-  if (today === 6 || today === 0) {
-
-    res.send("<h1>Yay It's the weekend</h1>");
-
-
-  } else {
-
-    res.sendFile(__dirname + "/index.html");
-
-// // res.write allows us to send multiple lines of code
-//     res.write("<h1>It's still " + day + " i've gotta work damm!!</h1>");
-//     res.write("<h1>Bollocks!!</h1>");
-//
-//     // res.send will end the transmission
-
-  }
+  let day = date.toLocaleDateString("en-US", options);
 
 
 
 
+  res.render("list", {
+    dayOfTheWeek: day,
+    newListItems: items
+  });
 
+});
+
+
+app.post("/", function(req, res) {
+
+  let item = req.body.newItem;
+
+items.push(item);
+
+
+  res.redirect("/");
 
 
 });
+
+
+
 
 app.listen(3000, function() {
   console.log("Server is running on port 3000");
